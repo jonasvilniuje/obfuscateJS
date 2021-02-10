@@ -25,30 +25,26 @@ function toUnicode(str) {
  * @returns {null} traverses only.
  */
 function traverseJSON(obj) {
-    
     for (const prop in obj) {
-        if(Array.isArray(obj[prop])) {
+        if (Array.isArray(obj[prop])) {
             const elements = [];
             for (const el of obj[prop]) {
                 elements.push(toUnicode(String(el)));
             }
-            propUnicoded = toUnicode(prop);
+            const propUnicoded = toUnicode(prop);
             obj[propUnicoded] = elements;
             delete obj[prop];
-        }
-        else if (typeof obj[prop] === 'object') {
+        } else if (typeof obj[prop] === 'object') {
             const propUnicoded = toUnicode(prop);
             obj[propUnicoded] = obj[prop];
 
             delete obj[prop];
 
             traverseJSON(obj[propUnicoded]);
-        }
-        else {
+        } else {
             if (typeof obj[prop] === 'string') {
                 obj[prop] = toUnicode(obj[prop]);
             }
-            
             _prop = toUnicode(prop);
             obj[_prop] = obj[prop];
             delete obj[prop];
