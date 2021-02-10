@@ -107,4 +107,67 @@ describe('obfuscator entry point', () => {
             });
         });
     });
+
+    describe('word mappings', () => {
+        it('should obfuscate object of simple data types', () => {
+            const mappings = {
+                name: '\\x6e\\x61\\x6d\\x65',
+                John: '\\x4a\\x6f\\x68\\x6e'
+            };
+
+            const result = obf.obfuscate({name: 'John', someInt: 1, someBool: true}, mappings);
+
+            expect(result).to.deep.equal({
+                [mappings.name]: mappings.John,
+                '\\u0073\\u006f\\u006d\\u0065\\u0049\\u006e\\u0074': 1,
+                '\\u0073\\u006f\\u006d\\u0065\\u0042\\u006f\\u006f\\u006c': true
+            });
+        });
+
+        it('should obfuscate array of simple data types', () => {
+            const mappings = {
+                Ford: '\\x4a\\x6f\\x68\\x6e',
+                BMW: '\\x4a\\x6f\\x68\\x65'
+            };
+
+            const result = obf.obfuscate(['Ford', 'BMW', 'Fiat'], mappings);
+
+            expect(result).to.deep.equal([
+                mappings.Ford,
+                mappings.BMW,
+                '\\u0046\\u0069\\u0061\\u0074'
+            ]);
+        });
+
+        it('should obfuscate array with nested objects and arrays', () => {
+            const mappings = {
+                cars: '\\x65\\x65\\x65\\x65',
+                name: '\\x6e\\x61\\x6d\\x65',
+                Ford: '\\x4a\\x6f\\x68\\x6e',
+                Focus: '\\x4a\\x6f\\x68\\x65'
+            };
+
+            const result = obf.obfuscate({
+                cars: [
+                    {
+                        name: 'Ford',
+                        models: ['Fiesta', 'Focus', 'Mustang']
+                    }
+                ]
+            }, mappings);
+
+            expect(result).to.deep.equal({
+                [mappings.cars]: [
+                    {
+                        [mappings.name]: mappings.Ford,
+                        '\\u006d\\u006f\\u0064\\u0065\\u006c\\u0073': [
+                            '\\u0046\\u0069\\u0065\\u0073\\u0074\\u0061',
+                            mappings.Focus,
+                            '\\u004d\\u0075\\u0073\\u0074\\u0061\\u006e\\u0067'
+                        ]
+                    }
+                ]
+            });
+        });
+    });
 });
