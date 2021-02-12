@@ -4,7 +4,7 @@ const obf = require('../obfuscator');
 
 describe('obfuscator entry point', () => {
     describe('object obfuscation', () => {
-        it('should obfuscate object of simple data types', () => {
+        it.only('should obfuscate object of simple data types', () => {
             const result = obf.obfuscate({name: 'John', someInt: 1, someBool: true});
 
             expect(result).to.deep.equal({
@@ -34,7 +34,7 @@ describe('obfuscator entry point', () => {
     });
 
     describe('array obfuscation', () => {
-        it('should obfuscate array of simple data types', () => {
+        it.only('should obfuscate array of simple data types', () => {
             const result = obf.obfuscate(['Ford', 'BMW', 'Fiat']);
 
             expect(result).to.deep.equal([

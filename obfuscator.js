@@ -7,51 +7,56 @@ const fs = require('fs');
  * @returns {String} the converted string.
  */
 function toUnicode(str) {
-    return str.split('').map((value) => {
-        const temp = value.charCodeAt(0).toString(16).toLowerCase();
-        if (temp.length > 0) {
-            // eslint-disable-next-line prefer-template
-            const unicodeAddress = ('0000' + temp).slice(-4);
-            return `${'\\u'}${unicodeAddress}`;
-        }
-        return value;
-    }).join('');
+    if (typeof str === 'string') {
+        return str.split('').map((value) => {
+            const temp = value.charCodeAt(0).toString(16).toLowerCase();
+            if (temp.length > 0) {
+                // eslint-disable-next-line prefer-template
+                const unicodeAddress = ('0000' + temp).slice(-4);
+                return `${'\\u'}${unicodeAddress}`;
+            }
+            return value;
+        }).join('');
+    }
+    return str;
 }
 
 /**
  * Traverses through JSON object
- * @param {Object} obj The first number.
+ * @param {Object} objOrArray The first number.
  * @param {String} prop The second number.
  * @returns {null} traverses only.
  */
-function traverseJSON(obj) {
-    for (const prop in obj) {
-        if (Array.isArray(obj[prop])) {
-            const elements = [];
-            for (const el of obj[prop]) {
-                elements.push(toUnicode(String(el)));
-            }
-            const propUnicoded = toUnicode(prop);
-            obj[propUnicoded] = elements;
-            delete obj[prop];
-        } else if (typeof obj[prop] === 'object') {
-            const propUnicoded = toUnicode(prop);
-            obj[propUnicoded] = obj[prop];
+function traverseJSON(objOrArray) {
+    console.log('TRAVERSE_JSON');
 
-            delete obj[prop];
-
-            traverseJSON(obj[propUnicoded]);
-        } else {
-            if (typeof obj[prop] === 'string') {
-                obj[prop] = toUnicode(obj[prop]);
-            }
-            _prop = toUnicode(prop);
-            obj[_prop] = obj[prop];
-            delete obj[prop];
+    if (Array.isArray(objOrArray)) {
+        console.log(' TRAVERSE_JSON ARRAY');
+        const elementsArr = [];
+        for (const el of objOrArray) {
+            //console.log("arrayElement", el);
+            /*if (typeof el === 'object') traverseJSON(el);
+            else {
+            }*/
+            const elUnicoded = toUnicode(el);
+            elementsArr.push(elUnicoded);
         }
-    }
-}
 
+        return elementsArr;
+    }
+    if (typeof objOrArray === 'object') {
+        console.log(" TRAVERSE_JSON OBJECT");
+        Object.entries(objOrArray).forEach(([key, value]) => {
+            // do something with key and val
+            //console.log("OBJECT", key, value);
+            objOrArray[toUnicode(key)] = toUnicode(value);
+            delete objOrArray[key];
+        });
+        return objOrArray;
+    }
+    console.log('TRAVERSE_JSON ELSE');
+    return objOrArray;
+}
 
 /**
  * Converts string to unicode sequence
@@ -64,17 +69,16 @@ function obfuscate(json) {
     //const obj = JSON.parse(json);
     obj = json;
     // eslint-disable-next-line no-console
-    console.log("data to obfuscate");
+    console.log('data to obfuscate');
     console.dir(obj, {depth: null});
 
-    traverseJSON(obj);
-
+    const result = traverseJSON(obj);
+    return result;
     //setTimeout(() => callback(null, obj), 1000);
     // eslint-disable-next-line no-console
-    console.log("obfuscated data");
-    console.dir(obj, {depth: null});
-    
-    return obj;
+    //console.log("obfuscated data");
+    //console.dir(obj, {depth: null});
+
 }
 // eslint rules
 // var - > const
