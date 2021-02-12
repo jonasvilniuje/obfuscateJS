@@ -34,21 +34,24 @@ function traverseJSON(objOrArray) {
         console.log(' TRAVERSE_JSON ARRAY');
         const elementsArr = [];
         for (const el of objOrArray) {
-            //console.log("arrayElement", el);
-            /*if (typeof el === 'object') traverseJSON(el);
+            // console.log("arrayElement", el);
+            /* if (typeof el === 'object') traverseJSON(el);
             else {
-            }*/
+            } */
             const elUnicoded = toUnicode(el);
             elementsArr.push(elUnicoded);
         }
-
+        console.log(elementsArr);
         return elementsArr;
     }
     if (typeof objOrArray === 'object') {
-        console.log(" TRAVERSE_JSON OBJECT");
+        console.log(' TRAVERSE_JSON OBJECT');
         Object.entries(objOrArray).forEach(([key, value]) => {
             // do something with key and val
-            //console.log("OBJECT", key, value);
+            // console.log("OBJECT", key, value);
+            if (typeof objOrArray === 'object') {
+                value = traverseJSON(value);
+            }
             objOrArray[toUnicode(key)] = toUnicode(value);
             delete objOrArray[key];
         });
@@ -66,7 +69,7 @@ function traverseJSON(objOrArray) {
  */
 function obfuscate(json) {
     // Here you have access to your variable
-    //const obj = JSON.parse(json);
+    // const obj = JSON.parse(json);
     obj = json;
     // eslint-disable-next-line no-console
     console.log('data to obfuscate');
@@ -74,10 +77,10 @@ function obfuscate(json) {
 
     const result = traverseJSON(obj);
     return result;
-    //setTimeout(() => callback(null, obj), 1000);
+    // setTimeout(() => callback(null, obj), 1000);
     // eslint-disable-next-line no-console
-    //console.log("obfuscated data");
-    //console.dir(obj, {depth: null});
+    // console.log("obfuscated data");
+    // console.dir(obj, {depth: null});
 
 }
 // eslint rules

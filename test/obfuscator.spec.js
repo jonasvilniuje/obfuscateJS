@@ -44,7 +44,7 @@ describe('obfuscator entry point', () => {
             ]);
         });
 
-        it('should obfuscate object with array of simple data types', () => {
+        it.only('should obfuscate object with array of simple data types', () => {
             const result = obf.obfuscate({
                 cars: ['Ford', 'BMW', 'Fiat']
             });
