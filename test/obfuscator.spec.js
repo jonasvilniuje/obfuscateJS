@@ -4,7 +4,7 @@ const obf = require('../obfuscator');
 
 describe('obfuscator entry point', () => {
     describe('object obfuscation', () => {
-        it.only('should obfuscate object of simple data types', () => {
+        it('should obfuscate object of simple data types', () => {
             const result = obf.obfuscate({name: 'John', someInt: 1, someBool: true});
 
             expect(result).to.deep.equal({
@@ -34,7 +34,7 @@ describe('obfuscator entry point', () => {
     });
 
     describe('array obfuscation', () => {
-        it.only('should obfuscate array of simple data types', () => {
+        it('should obfuscate array of simple data types', () => {
             const result = obf.obfuscate(['Ford', 'BMW', 'Fiat']);
 
             expect(result).to.deep.equal([
@@ -44,7 +44,7 @@ describe('obfuscator entry point', () => {
             ]);
         });
 
-        it.only('should obfuscate object with array of simple data types', () => {
+        it('should obfuscate object with array of simple data types', () => {
             const result = obf.obfuscate({
                 cars: ['Ford', 'BMW', 'Fiat']
             });
@@ -60,7 +60,95 @@ describe('obfuscator entry point', () => {
     });
 
     describe('mixed obfuscation', () => {
-        it('should obfuscate array with nested objects and arrays', () => {
+        it('should obfuscate array with nested objects', () => {
+            const result = obf.obfuscate([
+                {
+                    name: 'Ford',
+                    models: ['Fiesta', 'Focus', 'Mustang']
+                },
+                {
+                    name: 'BMW',
+                    models: ['320', 'X3', 'X5']
+                },
+                {
+                    name: 'Fiat',
+                    models: ['500', 'Panda']
+                }
+            ]);
+
+            expect(result).to.deep.equal([
+                {
+                    '\\u006e\\u0061\\u006d\\u0065': '\\u0046\\u006f\\u0072\\u0064',
+                    '\\u006d\\u006f\\u0064\\u0065\\u006c\\u0073': [
+                        '\\u0046\\u0069\\u0065\\u0073\\u0074\\u0061',
+                        '\\u0046\\u006f\\u0063\\u0075\\u0073',
+                        '\\u004d\\u0075\\u0073\\u0074\\u0061\\u006e\\u0067'
+                    ]
+                },
+                {
+                    '\\u006e\\u0061\\u006d\\u0065': '\\u0042\\u004d\\u0057',
+                    '\\u006d\\u006f\\u0064\\u0065\\u006c\\u0073': [
+                        '\\u0033\\u0032\\u0030',
+                        '\\u0058\\u0033',
+                        '\\u0058\\u0035'
+                    ]
+                },
+                {
+                    '\\u006e\\u0061\\u006d\\u0065': '\\u0046\\u0069\\u0061\\u0074',
+                    '\\u006d\\u006f\\u0064\\u0065\\u006c\\u0073': [
+                        '\\u0035\\u0030\\u0030',
+                        '\\u0050\\u0061\\u006e\\u0064\\u0061'
+                    ]
+                }
+            ]);
+        });
+
+        it('should obfuscate array with nested objects', () => {
+            const result = obf.obfuscate([
+                [
+                    {
+                        name: 'Ford',
+                        models: ['Fiesta', 'Focus', 'Mustang']
+                    },
+                    {
+                        name: 'BMW',
+                        models: ['320', 'X3', 'X5']
+                    },
+                    {
+                        name: 'Fiat',
+                        models: ['500', 'Panda']
+                    }
+                ]
+            ]);
+
+            expect(result).to.deep.equal([[
+                {
+                    '\\u006e\\u0061\\u006d\\u0065': '\\u0046\\u006f\\u0072\\u0064',
+                    '\\u006d\\u006f\\u0064\\u0065\\u006c\\u0073': [
+                        '\\u0046\\u0069\\u0065\\u0073\\u0074\\u0061',
+                        '\\u0046\\u006f\\u0063\\u0075\\u0073',
+                        '\\u004d\\u0075\\u0073\\u0074\\u0061\\u006e\\u0067'
+                    ]
+                },
+                {
+                    '\\u006e\\u0061\\u006d\\u0065': '\\u0042\\u004d\\u0057',
+                    '\\u006d\\u006f\\u0064\\u0065\\u006c\\u0073': [
+                        '\\u0033\\u0032\\u0030',
+                        '\\u0058\\u0033',
+                        '\\u0058\\u0035'
+                    ]
+                },
+                {
+                    '\\u006e\\u0061\\u006d\\u0065': '\\u0046\\u0069\\u0061\\u0074',
+                    '\\u006d\\u006f\\u0064\\u0065\\u006c\\u0073': [
+                        '\\u0035\\u0030\\u0030',
+                        '\\u0050\\u0061\\u006e\\u0064\\u0061'
+                    ]
+                }
+            ]]);
+        });
+
+        it('should obfuscate object with nested arrays', () => {
             const result = obf.obfuscate({
                 cars: [
                     {
@@ -108,7 +196,7 @@ describe('obfuscator entry point', () => {
         });
     });
 
-    describe('word mappings', () => {
+    describe.skip('word mappings', () => {
         it('should obfuscate object of simple data types', () => {
             const mappings = {
                 name: '\\x6e\\x61\\x6d\\x65',
