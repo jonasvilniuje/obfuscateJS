@@ -4,7 +4,7 @@
  * @param {String} temp a char converted to unicode escape.
  * @returns {String} the converted string.
  */
-function toUnicode(str) {
+function transformToObfuscatedPrimitive(str) {
     if (typeof str === 'string') {
         return str.split('').map((childObjOrArray) => {
             const temp = childObjOrArray.charCodeAt(0).toString(16).toLowerCase();
@@ -24,15 +24,15 @@ function toUnicode(str) {
  * @param {String} prop The second number.
  * @returns {null} traverses only.
  */
-function traverseJSON(objOrArray) {
+function transformToObfuscated(objOrArray) {
     if (Array.isArray(objOrArray)) {
         const elementsArr = [];
         for (const el of objOrArray) {
             let elUnicoded;
             if (typeof el === 'object') {
-                elUnicoded = traverseJSON(el);
+                elUnicoded = transformToObfuscated(el);
             } else {
-                elUnicoded = toUnicode(el);
+                elUnicoded = transformToObfuscatedPrimitive(el);
             }
             elementsArr.push(elUnicoded);
         }
@@ -41,10 +41,10 @@ function traverseJSON(objOrArray) {
     if (typeof objOrArray === 'object') {
         Object.entries(objOrArray).forEach(([key, childObjOrArray]) => {
             if (typeof childObjOrArray === 'object') {
-                const newChildObjOrArray = traverseJSON(childObjOrArray);
-                objOrArray[toUnicode(key)] = newChildObjOrArray;
+                const newChildObjOrArray = transformToObfuscated(childObjOrArray);
+                objOrArray[transformToObfuscatedPrimitive(key)] = newChildObjOrArray;
             } else {
-                objOrArray[toUnicode(key)] = toUnicode(childObjOrArray);
+                objOrArray[transformToObfuscatedPrimitive(key)] = transformToObfuscatedPrimitive(childObjOrArray);
             }
             delete objOrArray[key];
         });
@@ -60,7 +60,7 @@ function traverseJSON(objOrArray) {
  * @returns {String} the converted string.
  */
 function obfuscate(obj) {
-    const result = traverseJSON(obj);
+    const result = transformToObfuscated(obj);
     return result;
 }
 
