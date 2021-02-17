@@ -4,7 +4,10 @@
  * @param {String} temp a char converted to unicode escape.
  * @returns {String} the converted string.
  */
-function transformToObfuscatedPrimitive(str) {
+function transformToObfuscatedPrimitive(str, mappings) {
+    if (mappings != null && Object.keys(mappings).includes(str)) {
+        return mappings[str];
+    }
     if (typeof str === 'string') {
         return str.split('').map((childObjOrArray) => {
             const temp = childObjOrArray.charCodeAt(0).toString(16).toLowerCase();
@@ -24,15 +27,15 @@ function transformToObfuscatedPrimitive(str) {
  * @param {String} prop The second number.
  * @returns {null} traverses only.
  */
-function transformToObfuscated(objOrArray) {
+function transformToObfuscated(objOrArray, mappings) {
     if (Array.isArray(objOrArray)) {
         const elementsArr = [];
         for (const el of objOrArray) {
             let elUnicoded;
             if (typeof el === 'object') {
-                elUnicoded = transformToObfuscated(el);
+                elUnicoded = transformToObfuscated(el, mappings);
             } else {
-                elUnicoded = transformToObfuscatedPrimitive(el);
+                elUnicoded = transformToObfuscatedPrimitive(el, mappings);
             }
             elementsArr.push(elUnicoded);
         }
@@ -40,11 +43,15 @@ function transformToObfuscated(objOrArray) {
     }
     if (typeof objOrArray === 'object') {
         Object.entries(objOrArray).forEach(([key, childObjOrArray]) => {
+            if (mappings != null && Object.keys(mappings).includes(key)) {
+                console.log("opa: ", key, mappings[key]);
+                objOrArray[key] = mappings[key];
+            }
             if (typeof childObjOrArray === 'object') {
-                const newChildObjOrArray = transformToObfuscated(childObjOrArray);
-                objOrArray[transformToObfuscatedPrimitive(key)] = newChildObjOrArray;
+                const newChildObjOrArray = transformToObfuscated(childObjOrArray, mappings);
+                objOrArray[transformToObfuscatedPrimitive(key, mappings)] = newChildObjOrArray;
             } else {
-                objOrArray[transformToObfuscatedPrimitive(key)] = transformToObfuscatedPrimitive(childObjOrArray);
+                objOrArray[transformToObfuscatedPrimitive(key, mappings)] = transformToObfuscatedPrimitive(childObjOrArray, mappings);
             }
             delete objOrArray[key];
         });
@@ -59,8 +66,8 @@ function transformToObfuscated(objOrArray) {
  * @param {function} callback the string to be converted.
  * @returns {String} the converted string.
  */
-function obfuscate(obj) {
-    const result = transformToObfuscated(obj);
+function obfuscate(obj, mappings) {
+    const result = transformToObfuscated(obj, mappings);
     return result;
 }
 

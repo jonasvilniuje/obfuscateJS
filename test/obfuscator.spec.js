@@ -196,7 +196,7 @@ describe('obfuscator entry point', () => {
         });
     });
 
-    describe.skip('word mappings', () => {
+    describe('word mappings', () => {
         it('should obfuscate object of simple data types', () => {
             const mappings = {
                 name: '\\x6e\\x61\\x6d\\x65',
