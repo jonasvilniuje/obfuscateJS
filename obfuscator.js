@@ -23,48 +23,34 @@ function transformToObfuscatedPrimitive(str, mappings) {
 
 /**
  * Traverses through JSON object
- * @param {Object} objOrArray The first number.
- * @param {String} prop The second number.
- * @returns {null} traverses only.
+ * @param {Object} objOrArray json object, array or primitive.
+ * @param {Object} mappings json object containing substitute data used for obfuscation of key values.
+ * @returns {objOrArray} returns modified object
  */
 function transformToObfuscated(objOrArray, mappings) {
     if (Array.isArray(objOrArray)) {
         const elementsArr = [];
         for (const el of objOrArray) {
-            let elUnicoded;
-            if (typeof el === 'object') {
-                elUnicoded = transformToObfuscated(el, mappings);
-            } else {
-                elUnicoded = transformToObfuscatedPrimitive(el, mappings);
-            }
-            elementsArr.push(elUnicoded);
+            elementsArr.push(transformToObfuscated(el, mappings));
         }
         return elementsArr;
     }
     if (typeof objOrArray === 'object') {
         Object.entries(objOrArray).forEach(([key, childObjOrArray]) => {
-            if (mappings != null && Object.keys(mappings).includes(key)) {
-                console.log("opa: ", key, mappings[key]);
-                objOrArray[key] = mappings[key];
-            }
-            if (typeof childObjOrArray === 'object') {
-                const newChildObjOrArray = transformToObfuscated(childObjOrArray, mappings);
-                objOrArray[transformToObfuscatedPrimitive(key, mappings)] = newChildObjOrArray;
-            } else {
-                objOrArray[transformToObfuscatedPrimitive(key, mappings)] = transformToObfuscatedPrimitive(childObjOrArray, mappings);
-            }
+            const newChildObjOrArray = transformToObfuscated(childObjOrArray, mappings);
+            objOrArray[transformToObfuscatedPrimitive(key, mappings)] = newChildObjOrArray;
             delete objOrArray[key];
         });
         return objOrArray;
     }
-    return objOrArray;
+    return transformToObfuscatedPrimitive(objOrArray, mappings);
 }
 
 /**
  * Converts string to unicode sequence
- * @param {String} urlToCall the string to be converted.
- * @param {function} callback the string to be converted.
- * @returns {String} the converted string.
+ * @param {Object} obj the object to be converted.
+ * @param {Object} mappings json object containing substitute data used for obfuscation of key values.
+ * @returns {Object} obufscated(encoded) object.
  */
 function obfuscate(obj, mappings) {
     const result = transformToObfuscated(obj, mappings);
