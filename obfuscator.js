@@ -29,19 +29,18 @@ function transformToObfuscatedPrimitive(str, mappings) {
  * @returns {newObjOrArray} returns modified object
  */
 function transformToObfuscated(objOrArray, mappings) {
-    const newObjOrArray = objOrArray;
-    if (Array.isArray(newObjOrArray)) {
+    if (Array.isArray(objOrArray)) {
         const elementsArr = [];
-        for (const el of newObjOrArray) {
+        for (const el of objOrArray) {
             elementsArr.push(transformToObfuscated(el, mappings));
         }
         return elementsArr;
     }
-    if (typeof newObjOrArray === 'object') {
-        Object.entries(newObjOrArray).forEach(([key, childObjOrArray]) => {
+    if (typeof objOrArray === 'object') {
+        const newObjOrArray = {};
+        Object.entries(objOrArray).forEach(([key, childObjOrArray]) => {
             const newChildObjOrArray = transformToObfuscated(childObjOrArray, mappings);
             newObjOrArray[transformToObfuscatedPrimitive(key, mappings)] = newChildObjOrArray;
-            delete newObjOrArray[key];
         });
         return newObjOrArray;
     }
