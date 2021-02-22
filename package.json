@@ -2,10 +2,10 @@
   "name": "js_obfuscator",
   "version": "1.0.0",
   "description": "",
-  "main": "index.js",
+  "main": "src/index.js",
   "scripts": {
     "test": "mocha 'test/**/*.js'",
-    "start": "node index.js",
+    "start": "node src/index.js",
     "lint": "eslint \"**/*.{js,json}\""
   },
   "author": "",

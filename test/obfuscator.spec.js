@@ -1,6 +1,6 @@
 /* eslint-disable quote-props */
 const {expect} = require('chai');
-const obf = require('../obfuscator');
+const obf = require('../src/obfuscator');
 
 describe('obfuscator entry point', () => {
     describe('object obfuscation', () => {
