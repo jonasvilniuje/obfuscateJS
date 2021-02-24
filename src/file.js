@@ -1,3 +1,4 @@
+const path = require('path');
 const fs = require('fs');
 
 /**
@@ -32,7 +33,29 @@ function writeToFileCallback(fileName, data, callback) {
     });
 }
 
+const readFilePromise = (fileName) => new Promise((resolve, reject) => {
+    fs.readFile(fileName, (err, result) => {
+        if (err) {
+            return reject(err);
+        }
+        const parsedData = JSON.parse(result);
+        resolve(parsedData); // or return resolve?
+        return parsedData; // again, is this correct?
+    });
+});
+
+const writeFilePromise = (fileName, data) => new Promise((resolve, reject) => {
+    fs.writeFile(fileName, JSON.stringify(data, null, 2), (err) => {
+        if (err) {
+            return reject(err);
+        }
+        return resolve;
+    });
+});
+
 module.exports = {
+    writeToFileCallback,
+    writeFilePromise,
     readFileContentJSONCallback,
-    writeToFileCallback
+    readFilePromise
 };
