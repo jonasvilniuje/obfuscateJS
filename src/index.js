@@ -3,6 +3,7 @@ const file = require('./file');
 const obf = require('./obfuscator');
 
 const readfilePath = path.join(__dirname, '../resources/cars.marks.json');
+const readMappingfilePath = path.join(__dirname, '../resources/mapping.json');
 const writefilePath = path.join(__dirname, '../resources/output.json');
 
 /* file.readFileContentJSONCallback(path.join(__dirname, '../resources/cars.marks.json'), (err, result) => {
@@ -24,27 +25,14 @@ const writefilePath = path.join(__dirname, '../resources/output.json');
  */
 // });
 
-// analogas su promise
+// rewritten with promise
 
 file.readFilePromise(readfilePath)
-    .then((result) => {
-        console.log(result);
-        return obf.obfuscate(result);
-    })
-    .then((newResult) => {
-        console.log(newResult);
-        return file.writeFilePromise(writefilePath, newResult);
-    })
+    .then((readJSON) => file.readFilePromise(readMappingfilePath).then((mappings) => {
+        const obfuscatedJSON = obf.obfuscate(readJSON, mappings);
+        return obfuscatedJSON;
+    }))
+    .then((writeJSON) => file.writeFilePromise(writefilePath, writeJSON))
     .catch((err) => {
         console.log(err);
     });
-
-/* file.writeFilePromise(filePath, )
-    .then((result) => {
-        console.log(result);
-    })
-    .catch((err) => {
-        console.log(err);
-    });
-
- */

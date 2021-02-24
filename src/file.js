@@ -39,8 +39,7 @@ const readFilePromise = (fileName) => new Promise((resolve, reject) => {
             return reject(err);
         }
         const parsedData = JSON.parse(result);
-        resolve(parsedData); // or return resolve?
-        return parsedData; // again, is this correct?
+        return resolve(parsedData);
     });
 });
 
@@ -49,7 +48,7 @@ const writeFilePromise = (fileName, data) => new Promise((resolve, reject) => {
         if (err) {
             return reject(err);
         }
-        return resolve;
+        return resolve();
     });
 });
 
