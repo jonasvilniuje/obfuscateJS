@@ -1,3 +1,4 @@
+/* eslint-disable arrow-body-style */
 const path = require('path');
 const file = require('./file');
 const obf = require('./obfuscator');
@@ -28,11 +29,17 @@ const writefilePath = path.join(__dirname, '../resources/output.json');
 // rewritten with promise
 
 file.readFilePromise(readfilePath)
-    .then((readJSON) => file.readFilePromise(readMappingfilePath).then((mappings) => {
-        const obfuscatedJSON = obf.obfuscate(readJSON, mappings);
-        return obfuscatedJSON;
-    }))
-    .then((writeJSON) => file.writeFilePromise(writefilePath, writeJSON))
+    .then((readJSON) => {
+        return file.readFilePromise(readMappingfilePath).then((mappings) => {
+            return obf.obfuscate(readJSON, mappings);
+        });
+    })
+    .then((writeJSON) => {
+        return file.writeFilePromise(writefilePath, writeJSON);
+    })
+    .then(() => {
+        console.log('success.');
+    })
     .catch((err) => {
         console.log(err);
     });
