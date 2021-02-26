@@ -1,4 +1,3 @@
-const path = require('path');
 const fs = require('fs');
 
 /**
@@ -36,10 +35,17 @@ function writeToFileCallback(fileName, data, callback) {
 const readFilePromise = (fileName) => new Promise((resolve, reject) => {
     fs.readFile(fileName, (err, result) => {
         if (err) {
-            return reject(err);
+            return reject(new Error(`error while reading file: ${err.message}`));
         }
-        const parsedData = JSON.parse(result);
-        return resolve(parsedData);
+        if (result) {
+            let parsedData = null;
+            try {
+                parsedData = JSON.parse(result);
+            } catch (error) {
+                return reject(new Error(`error while parsing file: ${error.message}`));
+            }
+            return resolve(parsedData);
+        }
     });
 });
 
